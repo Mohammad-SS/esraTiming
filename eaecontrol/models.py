@@ -8,6 +8,9 @@ class Group(models.Model):
 
     def __str__(self):
         return self.name
+    class Meta:
+        verbose_name = 'گروه کاربری'
+        verbose_name_plural = "گروه های کاربری"
 
 class Person(models.Model):
     name = models.CharField(verbose_name='Full Name' , max_length=100)
@@ -16,13 +19,16 @@ class Person(models.Model):
 
     def __str__(self):
         return str(self.id) + "-" + self.name
+    class Meta:
+        verbose_name = 'کاربر'
+        verbose_name_plural = "کاربران"
 
 class Timing(models.Model):
     TYPE = [(1 , 'Enter' ), (0 , 'Exit')]
     person = models.ForeignKey(Person , verbose_name='User' , on_delete=models.CASCADE)
     type = models.IntegerField(choices=TYPE)
-    date = models.DateField()
-    time = models.TimeField()
+    date = models.DateField(auto_now_add=True)
+    time = models.TimeField(auto_now_add=True)
 
     @property
     def persianDate(self):
@@ -45,3 +51,7 @@ class Timing(models.Model):
         else:
             type = "خروج"
         return date.strftime('%Y/%m/%d') + " - " + self.person.name + " : " + type
+
+    class Meta:
+        verbose_name = 'رکورد'
+        verbose_name_plural = "رکورد ها"

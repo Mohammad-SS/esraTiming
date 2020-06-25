@@ -25,7 +25,7 @@ SECRET_KEY = '5q(8&yepvym)lya81lyots^d4#hby%m2c(gfrqejsxt97jbxr^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['172.16.13.164']
+ALLOWED_HOSTS = ['172.16.13.168']
 
 
 # Application definition
@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'esraTiming.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/var/www/timing/database.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 

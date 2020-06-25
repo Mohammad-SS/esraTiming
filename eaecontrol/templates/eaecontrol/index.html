@@ -3,7 +3,7 @@
 <head>
     {% load static %}
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>سامانه حضور و غیاب موسسه اسراء</title>
     <link rel="stylesheet" href="{% static 'eaecontrol/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'eaecontrol/style.css' %}">
     <script src="{% static 'eaecontrol/jquery-3.5.1.min.js' %}"></script>
@@ -30,7 +30,7 @@
     <hr style="color: black">
     <div>
         <table class="table table-bordered text-center"
-               style="width: 80% ; margin-left: auto ; margin-right: auto ; margin-top: 50px">
+               style="width: 90% ; margin-left: auto ; margin-right: auto ; margin-top: 50px">
             <thead class="text-center">
             <tr>
                 <th class="text-center">
@@ -43,7 +43,13 @@
                     نام و نام خانوادگی
                 </th>
                 <th class="text-center">
+                    گروه کاربری
+                </th>
+                <th class="text-center" colspan="2">
                     عملیات
+                </th>
+                <th class="text-center">
+                    وضعیت امروز
                 </th>
             </tr>
             </thead>
@@ -62,22 +68,47 @@
                             </p>
 
                         </td>
-                        <td
-                        ">
-                        <p style="margin-top: 5px">
-                            {{ user.name }}
-                        </p>
+                        <td>
+                            <p style="margin-top: 5px">
+                                {{ user.name }}
+                            </p>
                         </td>
                         <td>
-                            {% if user.isIn %}
-                                <button data-id={{ user.id }}  class="btn btn-warning exit-btn" style="width: 80%">
-                                خروج
-                                </button>
-                            {% else %}
-                                <button data-id={{ user.id }} class="btn btn-success enter-btn" style="width: 80%">
+                            <p style="margin-top: 5px">
+                                {{ user.group.name }}
+                            </p>
+                        </td>
+                        <td>
+                            <button data-in={{ user.isIn }} data-id="{{ user.id }}" class="btn btn-success enter-btn" style="width: 90%">
                                 ورود
-                                </button>
-                            {% endif %}
+                            </button>
+                        </td>
+                        <td>
+
+                            <button data-in={{ user.isIn }} data-id="{{ user.id }}" class="btn btn-warning exit-btn" style="width: 90%">
+                                خروج
+                            </button>
+
+                        </td>
+                        <td>
+                            <div class="row">
+                                {% if user.isIn %}
+                                    <div class="col-lg-10 text-right" style="padding-top: 5px ; text-align: right">
+                                        <label class="label label-success" style="font-size: 13px">
+                                            حاضر - ورود :
+                                            {{ user.lastStatusChangeTime }}
+                                        </label>
+                                    </div>
+                                {% else %}
+                                    <div class="col-lg-10 text-right" style="padding-top: 5px ; text-align: right">
+                                        <label class="label label-danger" style="font-size: 13px">
+                                            غایب - خروج :
+                                            {{ user.lastStatusChangeTime }}
+                                        </label>
+                                    </div>
+                                {% endif %}
+                            </div>
+
                         </td>
                     </tr>
                 {% endfor %}
@@ -85,7 +116,55 @@
             </tbody>
         </table>
     </div>
+    <div style="position: absolute; left: 0; top: 0;font-size: 6px;">
+        {{ver}}
+    </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $('.exit-btn').unbind().on('click', function (e) {
+            e.preventDefault()
+            id = $(e.target).attr('data-id')
+            isin = $(e.target).attr('data-in')
+            console.log(isin)
+            if(isin == 'False'){
+            var alrt = confirm("کاربر غایب است ، از ثبت ×خروج× اطیمنان دارید ؟")
+            console.log(alrt)
+            if (alrt == false){
+                return false
+            }
+            }
+            $.post('sumbitExit/', {id}, function (response, status) {
+                $('button').attr('disabled', true)
+                if (status == 'success') {
+                    alert("با موفقیت ثبت شد")
+                    location.reload()
+                }
+                $('button').attr('disabled', false)
+            })
+        });
+        $('.enter-btn').unbind().on('click', function (e) {
+            e.preventDefault()
+            id = $(e.target).attr('data-id')
+            isin = $(e.target).attr('data-in')
+            console.log(isin)
+            if(isin == 'True'){
+            var alrt = confirm("کاربر حاضر است ، از ثبت ×ورود× اطیمنان دارید ؟")
+            console.log(alrt)
+            if (alrt == false){
+                return false
+            }
+            }
+            $.post('sumbitEnter/', {id}, function (response, status) {
+                if (status == 'success') {
+                    alert("با موفقیت ثبت شد")
+                    location.reload()
 
+                }
+            })
+        });
+
+    })
+</script>
 </body>
 </html>
